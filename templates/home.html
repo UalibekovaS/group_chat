@@ -1,0 +1,62 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <h1>Chat Room Communication</h1>
+  <form method="post" class="buttons" id="join-form" onsubmit="return validateForm(this)">
+    <div class="pick-name">
+      <input
+        type="text"
+        placeholder="Enter your username: "
+        name="name"
+        value="{{name}}"
+        class="name-input"
+        id="username-input"
+      />
+      <p id="validation-message" style="color: red"></p>
+      <!-- Validation message -->
+    </div>
+    <button type="submit" name="create" class="create-btn">
+      Create a Room
+    </button>
+    <p>or join</p>
+    {% if error %}
+    <ul>
+      <li>{{error}}</li>
+    </ul>
+    {% endif %}
+  </form>
+  <div class="container-existing">
+    <h2>Existing Chat Rooms</h2>
+    <ul class="chat-list">
+      {% for room in existing_rooms %}
+      <li class="chat-room">
+        <form method="GET" action="/room" onsubmit="return validateForm(this)">
+          <input type="hidden" name="room" value="{{ room }}" />
+          <input type="hidden" name="join" value="true" />
+          <input type="hidden" name="name" value="{{name}}" />
+          {{ room }} <button type="submit">Join</button>
+        </form>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+<script>
+  function validateForm(form) {
+    var usernameInput = document.getElementById("username-input");
+    var hiddenUsernameInput = form.querySelector('input[name="name"]');
+    var validationMessage = document.getElementById("validation-message");
+    var name = usernameInput.value.trim();
+
+    if (name === "") {
+      validationMessage.textContent = "Please enter a username.";
+      return false; // Prevent the form from submitting
+    } else {
+      // Set the name as a query parameter before submitting the form
+      name = usernameInput.value.trim();
+      hiddenUsernameInput.value = name; // Set the value of the hidden input
+      validationMessage.textContent = ""; // Clear any previous validation message
+      return true;
+    }
+  }
+</script>
+{% endblock %}
